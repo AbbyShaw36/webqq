@@ -1,0 +1,12 @@
+#chat_head { top: 42px; }
+#chat_content { background-color: #f9f9f9; }
+#chat_input .ui-input-text { display: inline-block; width: 68%; }
+#chat_input .ui-input-text input { width: 100%; }
+.chat_box { overflow: hidden; }
+.chatBox_name { padding: 10px; }
+.chatBox_content { position: relative; padding: 10px; border-radius: 10px; max-width: 200px; margin-bottom: 1em; text-shadow: none; }
+.chatBox_content:before { content: ""; position: absolute; top: 8px; width: 0; height: 0; border: solid 10px; }
+.chatBoxLeft_content { margin-left: 10px; background-color: #f8c301; }
+.chatBoxLeft_content:before { left: -20px; border-color: #f9f9f9 #f8c301 #f9f9f9 #f9f9f9; }
+.chatBoxRight_content { margin-right: 10px; background-color: #a7d143; }
+.chatBoxRight_content:before { right: -20px; border-color: #f9f9f9 #f9f9f9 #f9f9f9 #a7d143; }
