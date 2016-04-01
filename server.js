@@ -2,7 +2,8 @@ var http = require("http");	// http服务
 var fs = require("fs");	// 文件操作
 var path = require("path"); // 处理文件路径
 var mime = require("mime");	// 处理文件扩展名
-var index = require("./server/index.js");
+var index = require("./server/index");
+var login = require("./server/login");
 
 // 返回404响应
 function send404(res) {
@@ -21,7 +22,6 @@ function sendFile(res, filePath, fileContent) {
 
 // 请求处理
 function serveStatic(res, filePath) {
-	console.log(filePath);
 	// 文件是否存在
 	fs.exists(filePath, function(exists){
 		if (exists) {
@@ -41,20 +41,20 @@ function serveStatic(res, filePath) {
 
 // 创建服务
 var server = http.createServer(function(req, res){
+	console.log(req.url);
 	var filePath = "";
 
-	if (req.url == "/") {
-		// filePath = "index.html";
-		res.writeHead(200,{"Content-Type" : "text/html"});
-		res.end(index.getFile());
-		return;
-	} else {
-		filePath = req.url;
+	switch(req.url) {
+		case "/" :
+			index.getFile(req,res);
+			return;
+		case "/setLogin" :
+			login.setLogin(req,res);
+			return;
+		default :
+			filePath = "./" + req.url;
+			serveStatic(res, filePath);
 	}
-
-	filePath = "./" + filePath;
-
-	serveStatic(res, filePath);
 });
 
 // 监听服务

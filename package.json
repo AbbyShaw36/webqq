@@ -5,6 +5,7 @@
 	"dependencies" : {
 		"socket.io" : "~0.9.6",
 		"mime" : "~1.2.7",
-		"ejs" : "~0.8.5"
+		"ejs" : "~0.8.5",
+		"mysql" : "2.10.2"
 	}
 }
