@@ -4,6 +4,7 @@ var path = require("path"); // 处理文件路径
 var mime = require("mime");	// 处理文件扩展名
 var index = require("./server/index");
 var login = require("./server/login");
+var chatServer = require("./server/chat_server");
 
 // 返回404响应
 function send404(res) {
@@ -61,3 +62,5 @@ var server = http.createServer(function(req, res){
 server.listen(3000, function() {
 	console.log("Server listening on port 3000.");
 });
+
+chatServer.listen(server);

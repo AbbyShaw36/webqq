@@ -1,17 +1,21 @@
 var cookies = require("./cookies");
 var fs = require("fs");
 var querystring = require("querystring");
-var mysql = require("mysql");
+var mysql = require("easymysql");
 
-var connection = mysql.createConnection({
+var connection = mysql.create({
+	maxconnections : 10
+});
+
+connection.addserver({
 	host : "localhost",
 	user : "root",
 	password : ""
-});
+})
 
 exports.isLogin = function(req) {
-	// console.log(cookies.getCookies(req).userName);
-	if (cookies.getCookies(req).userName) {
+	console.log(cookies.getCookies(req).user);
+	if (cookies.getCookies(req).user) {
 		return true;
 	} else {
 		return false;
@@ -34,21 +38,9 @@ exports.sendLoginFile = function(res) {
 exports.setLogin = function(req, res) {
 	req.addListener("data",function(data) {
 		var name = querystring.parse(data + '').name;
-		var setSql = "INSERT INTO user(name) VALUES(?)";
-		var setSql_value = [name];
+		var setSql = "INSERT INTO user(name) VALUES('"+name+"'')";
 		var searchSql = "SELECT * FROM user WHERE name='" + name + "'";
 
-		// 连接数据库
-		connection.connect(function(err){
-			if (err) {
-				console.log("[query] - :"+err);
-				res.end("0");
-				return;
-			}
-			console.log("[connection connect] succeed!");
-		});
-
-		// 指定某个数据库
 		connection.query("USE webqq",function(err) {
 			if (err) {
 				console.log("[USE DATABASE ERROR] - :",err.message);
@@ -57,7 +49,6 @@ exports.setLogin = function(req, res) {
 			}
 			console.log("[connection use database] succeed!");
 		});
-
 		// 查找是否有相同名字用户存在
 		connection.query(searchSql,function(err,result) {
 			if (err) {
@@ -71,28 +62,18 @@ exports.setLogin = function(req, res) {
 				return;
 			}
 		});
-
 		// 写入数据库表
-		connection.query(setSql,setSql_value,function(err,result) {
+		connection.query(setSql,function(err,result) {
 			if (err) {
 				console.log("[INSERT ERROR]-",err.message);
 				res.end("0");
 				return;
-			} else {
-				console.log("INSERT ID:",result);
-				res.writeHead(200,{
-					"Set-Cookie" : "userName=" + name
-				});
-				res.end("1");
 			}
+			console.log("INSERT ID:",result);
+			res.writeHead(200,{
+				"Set-Cookie" : "user=" + result.insertId
+			});
+			res.end("1");
 		});
-
-		// 断开连接
-		connection.end(function(err){
-			if (err) {
-				return;
-			}
-			console.log("[connection end] succeed!");
-		})
 	});
 }
