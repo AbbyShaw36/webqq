@@ -10,4 +10,15 @@ $(document).ready(function(){
 			}
 		});
 	});
+
+	socket.on("getNewFriends",function(user) {
+		console.log(user);
+		var newUser = "<li id=\"" + user.userId + "\"><span class=\"l\">"+user.userName+"</span><span class=\"r\">[在线]</span></li>";
+		$(".userList").append($(newUser));
+		$(".content_title span").text(Number($(".content_title span").text()) + 1);
+	})
+
+	$(window).unload(function() {
+		$.removeCookie("user");
+	});
 })

@@ -1,17 +1,7 @@
 var cookies = require("./cookies");
 var fs = require("fs");
 var querystring = require("querystring");
-var mysql = require("easymysql");
-
-var connection = mysql.create({
-	maxconnections : 10
-});
-
-connection.addserver({
-	host : "localhost",
-	user : "root",
-	password : ""
-})
+var mysql = require("mysql");
 
 exports.isLogin = function(req) {
 	console.log(cookies.getCookies(req).user);
@@ -38,8 +28,15 @@ exports.sendLoginFile = function(res) {
 exports.setLogin = function(req, res) {
 	req.addListener("data",function(data) {
 		var name = querystring.parse(data + '').name;
-		var setSql = "INSERT INTO user(name) VALUES('"+name+"'')";
+		var setSql = "INSERT INTO user(name) VALUES('"+name+"')";
 		var searchSql = "SELECT * FROM user WHERE name='" + name + "'";
+		var connection = mysql.createConnection({
+			host : "localhost",
+			user : "root",
+			password : ""
+		});
+
+		connection.connect();
 
 		connection.query("USE webqq",function(err) {
 			if (err) {
@@ -48,32 +45,34 @@ exports.setLogin = function(req, res) {
 				return;
 			}
 			console.log("[connection use database] succeed!");
-		});
-		// 查找是否有相同名字用户存在
-		connection.query(searchSql,function(err,result) {
-			if (err) {
-				console.log("[SELECT ERROR]-",err.message);
-				res.end("0");
-				return;
-			}
+		
+			// 查找是否有相同名字用户存在
+			connection.query(searchSql,function(err,result) {
+				if (err) {
+					console.log("[SELECT ERROR]-",err.message);
+					res.end("0");
+					return;
+				}
 
-			if (result.length > 0) {
-				res.end("2");
-				return;
-			}
-		});
-		// 写入数据库表
-		connection.query(setSql,function(err,result) {
-			if (err) {
-				console.log("[INSERT ERROR]-",err.message);
-				res.end("0");
-				return;
-			}
-			console.log("INSERT ID:",result);
-			res.writeHead(200,{
-				"Set-Cookie" : "user=" + result.insertId
+				if (result.length > 0) {
+					res.end("2");
+					return;
+				}
+				// 写入数据库表
+				connection.query(setSql,function(err,result) {
+					if (err) {
+						console.log("[INSERT ERROR]-",err.message);
+						res.end("0");
+						return;
+					}
+					console.log("INSERT ID:",result);
+					res.writeHead(200,{
+						"Set-Cookie" : "user=" + result.insertId
+					});
+					res.end("1");
+					connection.end();
+				});
 			});
-			res.end("1");
 		});
 	});
 }
