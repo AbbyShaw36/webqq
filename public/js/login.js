@@ -1,6 +1,6 @@
 $(document).ready(function(){
-	$("body").on("click",".btn input[value='登录']",function() {
-		var name = $("input[name='name']").val();
+	$("body").on("click","#login",function() {
+		var name = $("#name").val();
 		console.log(name);
 
 		$.ajax({
@@ -14,7 +14,7 @@ $(document).ready(function(){
 						alert("登录失败！");
 						break;
 					case "1" :
-						location.reload();
+						window.location = "/index";
 						break;
 					case "2" :
 						alert("用户名已存在！");
