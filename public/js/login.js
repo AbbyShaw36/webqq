@@ -5,7 +5,7 @@ $(document).ready(function(){
 
 		$.ajax({
 			type : "POST",
-			url : "/setLogin",
+			url : "/index",
 			dataType : "text",
 			data : "name=" + name,
 			success : function(data) {

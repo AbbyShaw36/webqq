@@ -7,7 +7,7 @@ function start(route,handle) {
 		route(req,res,pathname,handle);
 	}
 
-	http.createServer(onRequest).linsten(3000,function() {
+	http.createServer(onRequest).listen(3000,function() {
 		console.log("Server has started.");
 	});
 }

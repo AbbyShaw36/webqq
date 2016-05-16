@@ -1,10 +1,10 @@
 var querystring = require("querystring"),
 	cookies = require("./cookies"),
 	send = require("./send"),
-	index = require("./index"),
-	login = require("./controller/login");
+	index = require("../controller/index"),
+	login = require("../controller/login");
 
-function login(req,res) {
+function loginDone(req,res) {
 	// 已登录，返回主页
 	if (cookies.getCookies(req).isLogin) {
 		res.writeHead(302,{
@@ -19,7 +19,7 @@ function login(req,res) {
 	send.serveStatic(res,pathname);
 }
 
-function index(req,res) {
+function indexDone(req,res) {
 	// 未登录
 	if (!cookies.getCookies(req).isLogin) {
 		// 登录
@@ -56,5 +56,5 @@ function index(req,res) {
 	var indexFile = index.getIndexFile();
 }
 
-exports.login = login;
-exports.index = index;
+exports.login = loginDone;
+exports.index = indexDone;

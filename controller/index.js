@@ -1,5 +1,7 @@
-var send = require("./router/send");
+var send = require("../router/send");
 
 function getIndexFile() {
 	
 }
+
+exports.getIndexFile = getIndexFile;
